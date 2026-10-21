@@ -7,4 +7,4 @@ Electron-Hülle um die Web-App (Mac, Windows). Später Träger für den Pult-Syn
 - Build: `npm run dist:mac` / `npm run dist:win`
 
 - Icon: `build/icon.png` (1024 px); electron-builder erzeugt daraus .icns/.ico
-- CI: `.github/workflows/build.yml` baut bei Tag `v*` (oder manuell) Mac-DMG und Windows-Installer als Artefakte. Unsigniert, bis Zertifikate als Secrets hinterlegt sind.
+- CI: `.github/workflows/build.yml` baut bei Tag `v*` Mac (signiert + notarisiert) und Windows (unsigniert) und veröffentlicht das Release; manueller Lauf baut nur Artefakte. Mac-Secrets: `CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`.
