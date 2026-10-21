@@ -3,6 +3,13 @@ const path = require('node:path')
 const { load, save, normalizeServerUrl } = require('./config')
 
 app.setName('LuxStage')
+app.setAboutPanelOptions({
+  applicationName: 'LuxStage',
+  applicationVersion: app.getVersion(),
+  version: '',
+  iconPath: path.join(__dirname, 'icon.png'),
+  copyright: '© LuxStage',
+})
 
 const ROOT_URL = 'https://luxstage.app'
 
