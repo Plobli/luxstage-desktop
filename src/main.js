@@ -29,6 +29,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'LuxStage',
+    icon: path.join(__dirname, '..', 'build', 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -90,6 +91,7 @@ ipcMain.handle('app:set-server', (_event, value) => {
 })
 
 app.whenReady().then(() => {
+  if (process.platform === 'darwin') app.dock?.setIcon(path.join(__dirname, '..', 'build', 'icon.png'))
   buildMenu()
   createWindow()
   app.on('activate', () => { if (!BrowserWindow.getAllWindows().length) createWindow() })
