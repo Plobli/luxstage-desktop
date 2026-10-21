@@ -31,6 +31,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'LuxStage',
+    backgroundColor: '#18181b',
     icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -64,7 +65,7 @@ function openSettings() {
   if (!win) return
   const url = win.webContents.getURL()
   if (url.startsWith('file://') || !allowedOrigin()) return
-  win.webContents.send('app:navigate', '/settings')
+  win.loadURL(`${allowedOrigin()}/settings`)
 }
 
 function buildMenu() {
