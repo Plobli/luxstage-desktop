@@ -14,6 +14,8 @@
   label { display: block; font-size: 13px; margin-bottom: 6px; }
   input { width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 15px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: inherit; }
   button { margin-top: 14px; width: 100%; padding: 10px; font-size: 15px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer; }
+  a { display: block; margin-top: 18px; text-align: center; font-size: 14px; color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  a:hover { color: var(--fg); }
   .err { color: #dc2626; font-size: 13px; min-height: 18px; margin-top: 8px; }
 </style>
 </head>
@@ -27,10 +29,12 @@
     <div class="err" id="err"></div>
     <button type="submit">Verbinden</button>
   </form>
+  <a id="reg">Neues Team anlegen</a>
 </main>
 <script>
   const team = document.getElementById('team'), err = document.getElementById('err')
   window.luxstageDesktop.getInfo().then((i) => { if (i.serverUrl) team.value = i.serverUrl })
+  document.getElementById('reg').addEventListener('click', () => window.luxstageDesktop.openRegister())
   document.getElementById('f').addEventListener('submit', async (e) => {
     e.preventDefault()
     err.textContent = ''

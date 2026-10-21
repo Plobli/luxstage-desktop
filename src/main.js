@@ -4,6 +4,8 @@ const { load, save, normalizeServerUrl } = require('./config')
 
 app.setName('LuxStage')
 
+const ROOT_URL = 'https://luxstage.app'
+
 let win = null
 
 function allowedOrigin() {
@@ -48,7 +50,8 @@ function createWindow() {
   })
   win.webContents.on('will-navigate', (event, url) => {
     if (url.startsWith('file://')) return
-    if (new URL(url).origin !== allowedOrigin()) {
+    const origin = new URL(url).origin
+    if (origin !== allowedOrigin() && origin !== ROOT_URL) {
       event.preventDefault()
       if (/^https?:/i.test(url)) shell.openExternal(url)
     }
@@ -117,6 +120,10 @@ ipcMain.handle('app:info', () => ({
   platform: process.platform,
   serverUrl: load().serverUrl ?? null,
 }))
+
+ipcMain.handle('app:open-register', () => {
+  if (win) win.loadURL(`${ROOT_URL}/register`)
+})
 
 ipcMain.handle('app:set-server', (_event, value) => {
   const url = normalizeServerUrl(value)
