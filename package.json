@@ -43,7 +43,10 @@
         "repo": "luxstage-desktop",
         "releaseType": "release"
       }
-    ]
+    ],
+    "dmg": {
+      "sign": true
+    }
   },
   "devDependencies": {
     "electron": "^33.4.11",
