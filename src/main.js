@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron')
 const path = require('node:path')
+const { autoUpdater } = require('electron-updater')
 const { load, save, normalizeServerUrl } = require('./config')
 
 app.setName('LuxStage')
@@ -144,6 +145,10 @@ app.whenReady().then(() => {
   if (process.platform === 'darwin') app.dock?.setIcon(path.join(__dirname, 'icon.png'))
   buildMenu()
   createWindow()
+  if (app.isPackaged) {
+    autoUpdater.on('error', (err) => console.error('Update-Prüfung fehlgeschlagen:', err.message))
+    autoUpdater.checkForUpdatesAndNotify().catch(() => {})
+  }
   app.on('activate', () => { if (!BrowserWindow.getAllWindows().length) createWindow() })
 })
 
