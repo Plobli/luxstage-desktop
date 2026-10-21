@@ -5,5 +5,6 @@ const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld('luxstageDesktop', {
   isDesktop: true,
   getInfo: () => ipcRenderer.invoke('app:info'),
+  onNavigate: (cb) => ipcRenderer.on('app:navigate', (_e, path) => cb(path)),
   setServer: (value) => ipcRenderer.invoke('app:set-server', value),
 })

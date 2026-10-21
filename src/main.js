@@ -2,6 +2,8 @@ const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron')
 const path = require('node:path')
 const { load, save, normalizeServerUrl } = require('./config')
 
+app.setName('LuxStage')
+
 let win = null
 
 function allowedOrigin() {
@@ -29,7 +31,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'LuxStage',
-    icon: path.join(__dirname, '..', 'build', 'icon.png'),
+    icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -58,20 +60,53 @@ function createWindow() {
   showApp()
 }
 
+function openSettings() {
+  if (!win) return
+  const url = win.webContents.getURL()
+  if (url.startsWith('file://') || !allowedOrigin()) return
+  win.webContents.send('app:navigate', '/settings')
+}
+
 function buildMenu() {
+  const mac = process.platform === 'darwin'
+  const settings = { label: 'Einstellungen …', accelerator: 'CmdOrCtrl+,', click: openSettings }
+  const switchTeam = { label: 'Team wechseln …', click: () => win && showStart() }
   const template = [
-    ...(process.platform === 'darwin' ? [{ role: 'appMenu' }] : []),
+    ...(mac
+      ? [{
+          label: 'LuxStage',
+          submenu: [
+            { role: 'about', label: 'Über LuxStage' },
+            { type: 'separator' },
+            settings,
+            switchTeam,
+            { type: 'separator' },
+            { role: 'services', label: 'Dienste' },
+            { type: 'separator' },
+            { role: 'hide', label: 'LuxStage ausblenden' },
+            { role: 'hideOthers', label: 'Andere ausblenden' },
+            { role: 'unhide', label: 'Alle einblenden' },
+            { type: 'separator' },
+            { role: 'quit', label: 'LuxStage beenden' },
+          ],
+        }]
+      : [{
+          label: 'Datei',
+          submenu: [settings, switchTeam, { type: 'separator' }, { role: 'quit', label: 'Beenden' }],
+        }]),
+    { role: 'editMenu', label: 'Bearbeiten' },
     {
-      label: 'LuxStage',
+      label: 'Ansicht',
       submenu: [
-        { label: 'Team wechseln …', click: () => win && showStart() },
         { label: 'Neu laden', accelerator: 'CmdOrCtrl+R', click: () => win && showApp() },
-        ...(process.platform === 'darwin' ? [] : [{ role: 'quit' }]),
+        { role: 'togglefullscreen', label: 'Vollbild' },
+        { role: 'resetZoom', label: 'Originalgröße' },
+        { role: 'zoomIn', label: 'Vergrößern' },
+        { role: 'zoomOut', label: 'Verkleinern' },
+        ...(app.isPackaged ? [] : [{ type: 'separator' }, { role: 'toggleDevTools' }]),
       ],
     },
-    { role: 'editMenu' },
-    { role: 'viewMenu' },
-    { role: 'windowMenu' },
+    { role: 'windowMenu', label: 'Fenster' },
   ]
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
@@ -91,7 +126,7 @@ ipcMain.handle('app:set-server', (_event, value) => {
 })
 
 app.whenReady().then(() => {
-  if (process.platform === 'darwin') app.dock?.setIcon(path.join(__dirname, '..', 'build', 'icon.png'))
+  if (process.platform === 'darwin') app.dock?.setIcon(path.join(__dirname, 'icon.png'))
   buildMenu()
   createWindow()
   app.on('activate', () => { if (!BrowserWindow.getAllWindows().length) createWindow() })

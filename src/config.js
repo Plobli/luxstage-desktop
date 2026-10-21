@@ -19,19 +19,22 @@ function save(patch) {
   return next
 }
 
-// "demo" -> https://demo.luxstage.app; volle URLs (z. B. http://localhost:5173) bleiben erhalten.
+// "demo" -> https://demo.luxstage.app; "demo.luxstage.app" -> https://...; localhost[:port] -> http://...
+// Eine Eingabe mit http(s):// bleibt erhalten.
 function normalizeServerUrl(input) {
-  const value = String(input || '').trim()
+  let value = String(input || '').trim().replace(/\/+$/, '')
   if (!value) return null
-  if (/^https?:\/\//i.test(value)) {
-    try {
-      return new URL(value).origin
-    } catch {
-      return null
-    }
+  if (!/^https?:\/\//i.test(value)) {
+    if (/^[a-z0-9-]+$/i.test(value)) value = `${value.toLowerCase()}.luxstage.app`
+    const local = /^(localhost|127\.0\.0\.1|\[::1\]|[^/]+\.local)(:\d+)?(\/|$)/i.test(value)
+    value = `${local ? 'http' : 'https'}://${value}`
   }
-  if (/^[a-z0-9-]+$/i.test(value)) return `https://${value.toLowerCase()}.luxstage.app`
-  return null
+  try {
+    const url = new URL(value)
+    return url.hostname.includes('.') || url.hostname === 'localhost' || url.hostname === '[::1]' ? url.origin : null
+  } catch {
+    return null
+  }
 }
 
 module.exports = { load, save, normalizeServerUrl }
