@@ -33,7 +33,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'LuxStage',
-    backgroundColor: '#18181b',
+    backgroundColor: '#0b0b0e',
     icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
