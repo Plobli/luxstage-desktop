@@ -5,10 +5,9 @@
   "main": "src/main.js",
   "private": true,
   "scripts": {
-    "start": "electron .",
+    "start": "node scripts/dev-name.js && electron .",
     "dist:mac": "electron-builder --mac",
-    "dist:win": "electron-builder --win",
-    "prestart": "node scripts/dev-name.js"
+    "dist:win": "electron-builder --win"
   },
   "build": {
     "appId": "app.luxstage.desktop",
