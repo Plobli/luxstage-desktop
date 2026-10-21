@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "start": "node scripts/dev-name.js && electron .",
-    "dist:mac": "electron-builder --mac",
-    "dist:win": "electron-builder --win"
+    "dist:mac": "electron-builder --mac --publish never",
+    "dist:win": "electron-builder --win --publish never"
   },
   "build": {
     "appId": "app.luxstage.desktop",
