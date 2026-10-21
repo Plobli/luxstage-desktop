@@ -46,7 +46,8 @@
     ],
     "dmg": {
       "sign": true
-    }
+    },
+    "afterAllArtifactBuild": "scripts/notarize-dmg.js"
   },
   "devDependencies": {
     "electron": "^33.4.11",
