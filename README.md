@@ -1,6 +1,6 @@
 # LuxStage Desktop
 
-Electron-Hülle um die Web-App (Mac, Windows). Später Träger für den Pult-Sync (OSC im Hauptprozess).
+Electron-Hülle um die Web-App (Mac, Windows). Träger für den Pult-Sync (OSC über TCP 3037 im Hauptprozess: `src/osc.js`, `src/eos-sync.js`; Brücke `window.luxstageDesktop.eos`). Tests: `npm test`.
 
 - `npm install`, dann `npm start`
 - Erster Start: Team-Name (`mein-theater` -> https://mein-theater.luxstage.app) oder volle URL (z. B. http://localhost:5173)

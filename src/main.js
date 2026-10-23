@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron')
 const path = require('node:path')
 const { autoUpdater } = require('electron-updater')
 const { load, save, normalizeServerUrl } = require('./config')
+const { fetchPatch, DEFAULT_PORT } = require('./eos-sync')
 
 app.setName('LuxStage')
 app.setAboutPanelOptions({
@@ -139,6 +140,29 @@ ipcMain.handle('app:set-server', (_event, value) => {
   save({ serverUrl: url })
   showApp()
   return { ok: true }
+})
+
+// Pult-Sync: nur Aufrufe aus der eigenen Web-App (Team-Origin) zulassen.
+ipcMain.handle('eos:get-host', () => load().eosHost ?? '')
+
+ipcMain.handle('eos:fetch-patch', async (event, { host, port } = {}) => {
+  const sender = event.senderFrame?.url
+  let origin = null
+  try { origin = new URL(sender).origin } catch { /* ignorieren */ }
+  if (!origin || (origin !== allowedOrigin() && origin !== ROOT_URL)) return { ok: false, error: 'Nicht erlaubt' }
+  const cleanHost = String(host || '').trim()
+  if (!/^[a-z0-9.\-:[\]]+$/i.test(cleanHost)) return { ok: false, error: 'Ungültige Adresse' }
+  save({ eosHost: cleanHost })
+  try {
+    const result = await fetchPatch({
+      host: cleanHost,
+      port: Number(port) || DEFAULT_PORT,
+      onProgress: (done, total) => event.sender.send('eos:progress', { done, total }),
+    })
+    return { ok: true, ...result }
+  } catch (err) {
+    return { ok: false, error: err.message }
+  }
 })
 
 app.whenReady().then(() => {
