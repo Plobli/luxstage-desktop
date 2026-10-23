@@ -169,7 +169,8 @@ app.whenReady().then(() => {
   if (process.platform === 'darwin') app.dock?.setIcon(path.join(__dirname, 'icon.png'))
   buildMenu()
   createWindow()
-  if (app.isPackaged) {
+  // Store-Version (MSIX) aktualisiert der Microsoft Store selbst.
+  if (app.isPackaged && !process.windowsStore) {
     autoUpdater.on('error', (err) => console.error('Update-Prüfung fehlgeschlagen:', err.message))
     autoUpdater.checkForUpdatesAndNotify().catch(() => {})
   }

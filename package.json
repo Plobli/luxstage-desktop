@@ -30,7 +30,8 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "nsis",
+        "appx"
       ]
     },
     "nsis": {
@@ -48,7 +49,18 @@
     "dmg": {
       "sign": true
     },
-    "afterAllArtifactBuild": "scripts/notarize-dmg.js"
+    "afterAllArtifactBuild": "scripts/notarize-dmg.js",
+    "appx": {
+      "identityName": "ChristopherRohde.LuxStage",
+      "publisher": "CN=D7944E62-BCF9-486E-B729-E00B98A0352F",
+      "publisherDisplayName": "Christopher Rohde",
+      "applicationId": "LuxStage",
+      "displayName": "LuxStage",
+      "languages": [
+        "de-DE",
+        "en-US"
+      ]
+    }
   },
   "devDependencies": {
     "electron": "^33.4.11",
