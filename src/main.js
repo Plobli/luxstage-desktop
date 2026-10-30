@@ -215,7 +215,7 @@ function buildMenu() {
         action('Als PDF exportieren …', 'export-pdf', 'CmdOrCtrl+Shift+E'),
         action('Als CSV exportieren', 'export-csv'),
         { type: 'separator' },
-        action('Verlauf anzeigen', 'history', 'CmdOrCtrl+Y'),
+        action('Verlauf anzeigen', 'history', mac ? 'Command+Y' : 'Ctrl+H'),
         ...(mac ? [] : [{ type: 'separator' }, { role: 'quit', label: 'Beenden' }]),
       ],
     },
