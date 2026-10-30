@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('luxstageDesktop', {
   getInfo: () => ipcRenderer.invoke('app:info'),
   openRegister: () => ipcRenderer.invoke('app:open-register'),
   setServer: (value) => ipcRenderer.invoke('app:set-server', value),
+  setBadge: (count) => ipcRenderer.invoke('app:set-badge', count),
   eos: {
     getHost: () => ipcRenderer.invoke('eos:get-host'),
     fetchPatch: (host, port) => ipcRenderer.invoke('eos:fetch-patch', { host, port }),
