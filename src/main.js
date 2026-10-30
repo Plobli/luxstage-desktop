@@ -85,7 +85,7 @@ function createWindow() {
     backgroundColor: '#0b0b0e',
     icon: path.join(__dirname, 'icon.png'),
     ...(MAC
-      ? { titleBarStyle: 'hiddenInset', trafficLightPosition: { x: 16, y: 14 }, fullscreenable: true }
+      ? { titleBarStyle: 'hiddenInset', trafficLightPosition: { x: 18, y: 19 }, fullscreenable: true }
       : {}),
     webPreferences: {
       spellcheck: true,
