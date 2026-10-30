@@ -30,7 +30,11 @@ const NATIVE_CSS = `
   a, button, [role="button"], select, label, summary, input[type="checkbox"], input[type="radio"] { cursor: default; }
   a[href^="http"] { cursor: pointer; }
   img, a { -webkit-user-drag: none; }
+  .titlebar-drag { -webkit-app-region: drag; }
+  .titlebar-drag :is(button, a, input, select, textarea, label, [role="button"], [data-radix-collection-item]) { -webkit-app-region: no-drag; }
   ${MAC ? `
+  html.titlebar-toolbar { padding-top: 0 !important; }
+  html.titlebar-toolbar body::before { display: none; }
   html { padding-top: ${TITLEBAR}px; box-sizing: border-box; height: 100vh; }
   body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: ${TITLEBAR}px; -webkit-app-region: drag; z-index: 2147483647; pointer-events: auto; }
   ` : ''}

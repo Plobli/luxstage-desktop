@@ -4,6 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron')
 // eos.*: Pult-Sync (OSC im Hauptprozess, siehe eos-sync.js).
 contextBridge.exposeInMainWorld('luxstageDesktop', {
   isDesktop: true,
+  platform: process.platform,
   getInfo: () => ipcRenderer.invoke('app:info'),
   openRegister: () => ipcRenderer.invoke('app:open-register'),
   setServer: (value) => ipcRenderer.invoke('app:set-server', value),
