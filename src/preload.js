@@ -18,3 +18,8 @@ contextBridge.exposeInMainWorld('luxstageDesktop', {
     },
   },
 })
+
+// Fenster ohne Fokus: Klasse "window-blurred" am <html> (Web-App kann Farben dämpfen, wie native Mac-Apps).
+ipcRenderer.on('window:focus', (_event, focused) => {
+  document.documentElement.classList.toggle('window-blurred', !focused)
+})

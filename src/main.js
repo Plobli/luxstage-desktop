@@ -26,7 +26,8 @@ const NATIVE_CSS = `
   html, body { overscroll-behavior: none; -webkit-font-smoothing: antialiased; cursor: default; }
   body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   input, textarea, [contenteditable=""], [contenteditable="true"], pre, code, .selectable { -webkit-user-select: text; user-select: text; cursor: text; }
-  a, button, [role="button"], select, label, summary, input[type="checkbox"], input[type="radio"] { cursor: pointer; }
+  a, button, [role="button"], select, label, summary, input[type="checkbox"], input[type="radio"] { cursor: default; }
+  a[href^="http"] { cursor: pointer; }
   img, a { -webkit-user-drag: none; }
   ${MAC ? `
   html { padding-top: ${TITLEBAR}px; box-sizing: border-box; height: 100vh; }
@@ -113,6 +114,8 @@ function createWindow() {
     if (load().windowMaximized) win.maximize()
     win.show()
   })
+  win.on('focus', () => win.webContents.send('window:focus', true))
+  win.on('blur', () => win.webContents.send('window:focus', false))
   win.on('resize', rememberBounds)
   win.on('move', rememberBounds)
   win.on('close', rememberBounds)
