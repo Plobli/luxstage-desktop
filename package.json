@@ -1,6 +1,6 @@
 {
   "name": "luxstage-desktop",
-  "version": "2026.10.7",
+  "version": "2026.10.8",
   "description": "LuxStage Desktop – Hülle um die Web-App, Träger für den Pult-Sync",
   "main": "src/main.js",
   "private": true,

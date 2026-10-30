@@ -7,6 +7,11 @@ contextBridge.exposeInMainWorld('luxstageDesktop', {
   getInfo: () => ipcRenderer.invoke('app:info'),
   openRegister: () => ipcRenderer.invoke('app:open-register'),
   setServer: (value) => ipcRenderer.invoke('app:set-server', value),
+  onMenu: (callback) => {
+    const handler = (_event, action) => callback(action)
+    ipcRenderer.on('menu:action', handler)
+    return () => ipcRenderer.removeListener('menu:action', handler)
+  },
   setBadge: (count) => ipcRenderer.invoke('app:set-badge', count),
   eos: {
     getHost: () => ipcRenderer.invoke('eos:get-host'),

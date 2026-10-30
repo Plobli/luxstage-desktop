@@ -172,6 +172,12 @@ function openSettings() {
 
 function buildMenu() {
   const mac = process.platform === 'darwin'
+  // Menübefehl → Web-App (Seite entscheidet, ob sie ihn umsetzt)
+  const action = (label, name, accelerator) => ({
+    label,
+    ...(accelerator ? { accelerator } : {}),
+    click: () => win?.webContents.send('menu:action', name),
+  })
   const settings = { label: 'Einstellungen …', accelerator: 'CmdOrCtrl+,', click: openSettings }
   const switchTeam = { label: 'Team wechseln …', click: () => win && showStart() }
   const template = [
@@ -197,7 +203,32 @@ function buildMenu() {
           label: 'Datei',
           submenu: [settings, switchTeam, { type: 'separator' }, { role: 'quit', label: 'Beenden' }],
         }]),
-    { role: 'editMenu', label: 'Bearbeiten' },
+    {
+      label: mac ? 'Ablage' : 'Show',
+      submenu: [
+        action('Importieren …', 'import', 'CmdOrCtrl+I'),
+        { type: 'separator' },
+        action('Als PDF exportieren …', 'export-pdf', 'CmdOrCtrl+Shift+E'),
+        action('Als CSV exportieren', 'export-csv'),
+        { type: 'separator' },
+        action('Verlauf anzeigen', 'history', 'CmdOrCtrl+Y'),
+        ...(mac ? [] : [{ type: 'separator' }, { role: 'quit', label: 'Beenden' }]),
+      ],
+    },
+    {
+      label: 'Bearbeiten',
+      submenu: [
+        action('Widerrufen', 'undo', 'CmdOrCtrl+Z'),
+        action('Wiederholen', 'redo', mac ? 'Shift+Command+Z' : 'Ctrl+Y'),
+        { type: 'separator' },
+        { role: 'cut', label: 'Ausschneiden' },
+        { role: 'copy', label: 'Kopieren' },
+        { role: 'paste', label: 'Einsetzen' },
+        { role: 'selectAll', label: 'Alles auswählen' },
+        { type: 'separator' },
+        action('Suchen …', 'find', 'CmdOrCtrl+F'),
+      ],
+    },
     {
       label: 'Navigation',
       submenu: [
