@@ -23,7 +23,7 @@ const TITLEBAR = 28
 // Natives Verhalten für die Web-App: kein Text-Markieren auf der Oberfläche,
 // kein Gummiband-Scrollen, Standard-Cursor, Titelleiste zum Ziehen.
 const NATIVE_CSS = `
-  html { font-size: 14px; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; }
+  html { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; }
   html, body { overscroll-behavior: none; -webkit-font-smoothing: antialiased; cursor: default; }
   body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   input, textarea, [contenteditable=""], [contenteditable="true"], pre, code, .selectable { -webkit-user-select: text; user-select: text; cursor: text; }
