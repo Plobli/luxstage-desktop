@@ -5,6 +5,6 @@
   <key>com.apple.security.app-sandbox</key><true/>
   <key>com.apple.security.network.client</key><true/>
   <key>com.apple.security.application-groups</key>
-  <array><string>TEAM_ID.app.luxstage.desktop</string></array>
+  <array><string>4YH5HQEUK5.de.christopherrohde.LuxStageAppDesktop</string></array>
 </dict>
 </plist>

@@ -12,7 +12,7 @@
     "dist:mas": "electron-builder --mac mas"
   },
   "build": {
-    "appId": "app.luxstage.desktop",
+    "appId": "de.christopherrohde.LuxStageAppDesktop",
     "productName": "LuxStage",
     "files": [
       "src/**/*"
