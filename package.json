@@ -9,7 +9,7 @@
     "dist:mac": "electron-builder --mac",
     "dist:win": "electron-builder --win",
     "test": "node --test test/eos-sync.test.js",
-    "dist:mas": "electron-builder --mac mas"
+    "dist:mas": "electron-builder --mac mas --universal"
   },
   "build": {
     "appId": "de.christopherrohde.LuxStageApp",
