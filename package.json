@@ -8,7 +8,8 @@
     "start": "node scripts/dev-name.js && node scripts/dev-run.js",
     "dist:mac": "electron-builder --mac",
     "dist:win": "electron-builder --win",
-    "test": "node --test test/eos-sync.test.js"
+    "test": "node --test test/eos-sync.test.js",
+    "dist:mas": "electron-builder --mac mas"
   },
   "build": {
     "appId": "app.luxstage.desktop",
@@ -60,6 +61,15 @@
         "de-DE",
         "en-US"
       ]
+    },
+    "mas": {
+      "category": "public.app-category.productivity",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mas.plist",
+      "entitlementsInherit": "build/entitlements.mas.inherit.plist",
+      "provisioningProfile": "build/embedded.provisionprofile",
+      "type": "distribution"
     }
   },
   "devDependencies": {

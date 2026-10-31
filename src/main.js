@@ -314,8 +314,8 @@ app.whenReady().then(() => {
   }
   buildMenu()
   createWindow()
-  // Store-Version (MSIX) aktualisiert der Microsoft Store selbst.
-  if (app.isPackaged && !process.windowsStore) {
+  // Store-Versionen (MSIX, Mac App Store) aktualisiert der Store selbst.
+  if (app.isPackaged && !process.windowsStore && !process.mas) {
     autoUpdater.on('error', (err) => console.error('Update-Prüfung fehlgeschlagen:', err.message))
     autoUpdater.checkForUpdatesAndNotify().catch(() => {})
   }
