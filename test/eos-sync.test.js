@@ -2,7 +2,7 @@ const test = require('node:test')
 const assert = require('node:assert/strict')
 const net = require('node:net')
 const { encode, decode, FrameReader } = require('../src/osc')
-const { fetchPatch } = require('../src/eos-sync')
+const { fetchPatch, fetchGroups, channelsFromArgs } = require('../src/eos-sync')
 
 // Baut eine Eos-Antwort mit gemischten Typen: Strings (UID, Label, Hersteller, Modell), Ints (Index, Adresse).
 function listReply(channel, index, address, label, manufacturer, model) {
@@ -65,4 +65,43 @@ test('SLIP-Framing: Roundtrip und Erkennung', () => {
   assert.equal(detectFraming(data), 'slip')
   const [packet] = new SlipReader().push(data)
   assert.deepEqual(decode(packet), { address: '/eos/out/user', strings: [], ints: [9], floats: [] })
+})
+
+test('channelsFromArgs löst Einzelkreise und Bereiche auf', () => {
+  assert.deepEqual(channelsFromArgs([1], ['11-12']), [1, 11, 12])
+  assert.deepEqual(channelsFromArgs([], ['137-139', '150']), [137, 138, 139, 150])
+})
+
+test('fetchGroups liest Gruppen von Mock-Pult', async () => {
+  const groupList = (nr, label) => frame(Buffer.concat([str(`/eos/out/get/group/${nr}/list/0/3`), str(',iss'), i32(0), str('uid' + nr), str(label)]))
+  const groupChannels = (nr, ints, ranges) => frame(Buffer.concat([
+    str(`/eos/out/get/group/${nr}/channels/list/0/4`),
+    str(',is' + 'i'.repeat(ints.length) + 's'.repeat(ranges.length)),
+    i32(0), str('uid' + nr), ...ints.map(i32), ...ranges.map(str),
+  ]))
+  const server = net.createServer((sock) => {
+    const reader = new FrameReader()
+    sock.on('data', (chunk) => {
+      for (const raw of reader.push(chunk)) {
+        const msg = decode(raw)
+        if (msg.address === '/eos/get/group/count') {
+          sock.write(frame(Buffer.concat([str('/eos/out/get/group/count'), str(',i'), i32(2)])))
+        } else if (msg.address === '/eos/get/group/index/0') {
+          sock.write(groupList(2, 'Rücklicht'))
+          sock.write(groupChannels(2, [1], ['137-139']))
+        } else if (msg.address === '/eos/get/group/index/1') {
+          sock.write(groupList(10, ''))
+          sock.write(groupChannels(10, [], []))
+        }
+      }
+    })
+  })
+  await new Promise(r => server.listen(0, '127.0.0.1', r))
+  const result = await fetchGroups({ host: '127.0.0.1', port: server.address().port })
+  server.close()
+  assert.equal(result.complete, true)
+  assert.deepEqual(result.groups, [
+    { number: '2', label: 'Rücklicht', channels: [1, 137, 138, 139] },
+    { number: '10', label: '', channels: [] },
+  ])
 })

@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld('luxstageDesktop', {
   eos: {
     getHost: () => ipcRenderer.invoke('eos:get-host'),
     fetchPatch: (host, port) => ipcRenderer.invoke('eos:fetch-patch', { host, port }),
+    fetchGroups: (host, port) => ipcRenderer.invoke('eos:fetch-groups', { host, port }),
     onProgress: (callback) => {
       const handler = (_event, data) => callback(data)
       ipcRenderer.on('eos:progress', handler)

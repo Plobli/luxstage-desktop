@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme, screen } = requir
 const path = require('node:path')
 const { autoUpdater } = require('electron-updater')
 const { load, save, normalizeServerUrl } = require('./config')
-const { fetchPatch, DEFAULT_PORT } = require('./eos-sync')
+const { fetchPatch, fetchGroups, DEFAULT_PORT } = require('./eos-sync')
 
 app.setName('LuxStage')
 app.setAboutPanelOptions({
@@ -283,25 +283,30 @@ ipcMain.handle('app:set-server', (_event, value) => {
 // Pult-Sync: nur Aufrufe aus der eigenen Web-App (Team-Origin) zulassen.
 ipcMain.handle('eos:get-host', () => load().eosHost ?? '')
 
-ipcMain.handle('eos:fetch-patch', async (event, { host, port } = {}) => {
-  const sender = event.senderFrame?.url
-  let origin = null
-  try { origin = new URL(sender).origin } catch { /* ignorieren */ }
-  if (!origin || (origin !== allowedOrigin() && origin !== ROOT_URL)) return { ok: false, error: 'Nicht erlaubt' }
-  const cleanHost = String(host || '').trim()
-  if (!/^[a-z0-9.\-:[\]]+$/i.test(cleanHost)) return { ok: false, error: 'Ungültige Adresse' }
-  save({ eosHost: cleanHost })
-  try {
-    const result = await fetchPatch({
-      host: cleanHost,
-      port: Number(port) || DEFAULT_PORT,
-      onProgress: (done, total) => event.sender.send('eos:progress', { done, total }),
-    })
-    return { ok: true, ...result }
-  } catch (err) {
-    return { ok: false, error: err.message }
+// Gemeinsamer Ablauf für Patch und Gruppen: Herkunft prüfen, Adresse prüfen, merken, abrufen.
+function handleEosFetch(fetcher) {
+  return async (event, { host, port } = {}) => {
+    const sender = event.senderFrame?.url
+    let origin = null
+    try { origin = new URL(sender).origin } catch { /* ignorieren */ }
+    if (!origin || (origin !== allowedOrigin() && origin !== ROOT_URL)) return { ok: false, error: 'Nicht erlaubt' }
+    const cleanHost = String(host || '').trim()
+    if (!/^[a-z0-9.\-:[\]]+$/i.test(cleanHost)) return { ok: false, error: 'Ungültige Adresse' }
+    save({ eosHost: cleanHost })
+    try {
+      const result = await fetcher({
+        host: cleanHost,
+        port: Number(port) || DEFAULT_PORT,
+        onProgress: (done, total) => event.sender.send('eos:progress', { done, total }),
+      })
+      return { ok: true, ...result }
+    } catch (err) {
+      return { ok: false, error: err.message }
+    }
   }
-})
+}
+ipcMain.handle('eos:fetch-patch', handleEosFetch(fetchPatch))
+ipcMain.handle('eos:fetch-groups', handleEosFetch(fetchGroups))
 
 app.whenReady().then(() => {
   nativeTheme.themeSource = 'system'
