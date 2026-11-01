@@ -253,7 +253,14 @@ function buildMenu() {
       ],
     },
     { role: 'windowMenu', label: 'Fenster' },
-    ...(MAC ? [] : [{ role: 'help', label: 'Hilfe', submenu: [{ label: 'Dokumentation', click: () => shell.openExternal('https://docs.luxstage.app') }] }]),
+    {
+      role: 'help',
+      label: 'Hilfe',
+      submenu: [
+        action('Tour noch einmal ansehen', 'tour'),
+        { label: 'Dokumentation', click: () => shell.openExternal('https://docs.luxstage.app') },
+      ],
+    },
   ]
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
