@@ -14,6 +14,7 @@ app.setAboutPanelOptions({
 })
 
 const ROOT_URL = 'https://luxstage.app'
+const DEMO_URL = 'https://demo.luxstage.app' // Demo ohne Konto (Web-App, braucht Internet)
 
 let win = null
 
@@ -104,7 +105,7 @@ function createWindow() {
   win.webContents.on('will-navigate', (event, url) => {
     if (url.startsWith('file://')) return
     const origin = new URL(url).origin
-    if (origin !== allowedOrigin() && origin !== ROOT_URL) {
+    if (origin !== allowedOrigin() && origin !== ROOT_URL && origin !== DEMO_URL) {
       event.preventDefault()
       if (/^https?:/i.test(url)) shell.openExternal(url)
     }
@@ -266,6 +267,10 @@ ipcMain.handle('app:info', () => ({
 ipcMain.handle('app:set-badge', (_event, count) => {
   if (MAC) app.dock?.setBadge(Number(count) > 0 ? String(count) : '')
   else if (win) win.flashFrame(Number(count) > 0)
+})
+
+ipcMain.handle('app:open-demo', () => {
+  if (win) win.loadURL(DEMO_URL)
 })
 
 ipcMain.handle('app:open-register', () => {

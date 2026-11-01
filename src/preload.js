@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('luxstageDesktop', {
   platform: process.platform,
   getInfo: () => ipcRenderer.invoke('app:info'),
   openRegister: () => ipcRenderer.invoke('app:open-register'),
+  openDemo: () => ipcRenderer.invoke('app:open-demo'),
   setServer: (value) => ipcRenderer.invoke('app:set-server', value),
   onMenu: (callback) => {
     const handler = (_event, action) => callback(action)
