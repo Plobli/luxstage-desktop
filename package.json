@@ -1,6 +1,6 @@
 {
   "name": "luxstage-desktop",
-  "version": "2026.11.2",
+  "version": "2026.11.3",
   "description": "LuxStage Desktop – Hülle um die Web-App, Träger für den Pult-Sync",
   "main": "src/main.js",
   "private": true,
@@ -8,7 +8,7 @@
     "start": "node scripts/dev-name.js && node scripts/dev-run.js",
     "dist:mac": "electron-builder --mac",
     "dist:win": "electron-builder --win",
-    "test": "node --test test/eos-sync.test.js",
+    "test": "node --test test/eos-sync.test.js test/offline-cache.test.js",
     "dist:mas": "electron-builder --mac mas --universal"
   },
   "build": {

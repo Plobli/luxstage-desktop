@@ -1,8 +1,9 @@
-const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme, screen } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme, screen, protocol, net } = require('electron')
 const path = require('node:path')
 const { autoUpdater } = require('electron-updater')
 const { load, save, normalizeServerUrl } = require('./config')
 const { fetchPatch, fetchGroups, DEFAULT_PORT } = require('./eos-sync')
+const offlineCache = require('./offline-cache')
 
 app.setName('LuxStage')
 app.setAboutPanelOptions({
@@ -17,6 +18,7 @@ const ROOT_URL = 'https://luxstage.app'
 const DEMO_URL = 'https://demo.luxstage.app' // Demo ohne Konto (Web-App, braucht Internet)
 
 let win = null
+let cacheStore = null
 
 const MAC = process.platform === 'darwin'
 const TITLEBAR = 28
@@ -259,6 +261,8 @@ function buildMenu() {
       submenu: [
         action('Tour noch einmal ansehen', 'tour'),
         { label: 'Dokumentation', click: () => shell.openExternal('https://docs.luxstage.app') },
+        { type: 'separator' },
+        { label: 'Offline-Speicher leeren', click: () => { cacheStore?.clearAll(); if (win) showApp() } },
       ],
     },
   ]
@@ -329,6 +333,13 @@ app.whenReady().then(() => {
       { label: 'Einstellungen …', click: openSettings },
     ]))
   }
+  cacheStore = offlineCache.createStore(path.join(app.getPath('userData'), 'offline-cache'))
+  offlineCache.install({
+    protocol,
+    net,
+    store: cacheStore,
+    getOrigins: () => [allowedOrigin(), ROOT_URL, DEMO_URL].filter(Boolean),
+  })
   buildMenu()
   createWindow()
   // Store-Versionen (MSIX, Mac App Store) aktualisiert der Store selbst.
