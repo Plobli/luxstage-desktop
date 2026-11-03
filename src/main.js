@@ -4,6 +4,7 @@ const { autoUpdater } = require('electron-updater')
 const { load, save, normalizeServerUrl } = require('./config')
 const { fetchPatch, fetchGroups, DEFAULT_PORT } = require('./eos-sync')
 const offlineCache = require('./offline-cache')
+const { createMirror } = require('./offline-mirror')
 
 app.setName('LuxStage')
 app.setAboutPanelOptions({
@@ -19,6 +20,7 @@ const DEMO_URL = 'https://demo.luxstage.app' // Demo ohne Konto (Web-App, brauch
 
 let win = null
 let cacheStore = null
+let offlineMirror = null
 
 const MAC = process.platform === 'darwin'
 const TITLEBAR = 28
@@ -219,6 +221,8 @@ function buildMenu() {
         action('Als CSV exportieren', 'export-csv'),
         { type: 'separator' },
         action('Verlauf anzeigen', 'history', mac ? 'Command+Y' : 'Ctrl+H'),
+        { type: 'separator' },
+        action('Offline bearbeiten (Auschecken) ein/aus', 'offline-toggle'),
         ...(mac ? [] : [{ type: 'separator' }, { role: 'quit', label: 'Beenden' }]),
       ],
     },
@@ -324,6 +328,23 @@ function handleEosFetch(fetcher) {
 ipcMain.handle('eos:fetch-patch', handleEosFetch(fetchPatch))
 ipcMain.handle('eos:fetch-groups', handleEosFetch(fetchGroups))
 
+// Spiegeldatei für den Offline-Datenstand: nur Aufrufe aus der eigenen Web-App (Team-Origin).
+function fromOwnApp(event) {
+  let origin = null
+  try { origin = new URL(event.senderFrame?.url).origin } catch { /* ignorieren */ }
+  return !!origin && (origin === allowedOrigin() || origin === ROOT_URL)
+}
+ipcMain.handle('offline-mirror:write', (event, key, text) => {
+  if (!offlineMirror || !fromOwnApp(event)) return { ok: false }
+  try { offlineMirror.write(key, text); return { ok: true } } catch (err) { return { ok: false, error: err.message } }
+})
+ipcMain.handle('offline-mirror:read', (event, key) => (offlineMirror && fromOwnApp(event) ? offlineMirror.read(key) : null))
+ipcMain.handle('offline-mirror:remove', (event, key) => {
+  if (!offlineMirror || !fromOwnApp(event)) return { ok: false }
+  offlineMirror.remove(key)
+  return { ok: true }
+})
+
 app.whenReady().then(() => {
   nativeTheme.themeSource = 'system'
   if (MAC) {
@@ -334,6 +355,7 @@ app.whenReady().then(() => {
     ]))
   }
   cacheStore = offlineCache.createStore(path.join(app.getPath('userData'), 'offline-cache'))
+  offlineMirror = createMirror(path.join(app.getPath('userData'), 'offline-mirror'))
   offlineCache.install({
     protocol,
     net,

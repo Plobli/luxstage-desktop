@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 // Schnittstelle für Web-App und Startseite.
 // eos.*: Pult-Sync (OSC im Hauptprozess, siehe eos-sync.js).
+// offlineMirror.*: zweite Ablage des Offline-Datenstands als Datei (siehe offline-mirror.js).
 contextBridge.exposeInMainWorld('luxstageDesktop', {
   isDesktop: true,
   platform: process.platform,
@@ -15,6 +16,11 @@ contextBridge.exposeInMainWorld('luxstageDesktop', {
     return () => ipcRenderer.removeListener('menu:action', handler)
   },
   setBadge: (count) => ipcRenderer.invoke('app:set-badge', count),
+  offlineMirror: {
+    write: (key, text) => ipcRenderer.invoke('offline-mirror:write', key, text),
+    read: (key) => ipcRenderer.invoke('offline-mirror:read', key),
+    remove: (key) => ipcRenderer.invoke('offline-mirror:remove', key),
+  },
   eos: {
     getHost: () => ipcRenderer.invoke('eos:get-host'),
     fetchPatch: (host, port) => ipcRenderer.invoke('eos:fetch-patch', { host, port }),
