@@ -45,8 +45,67 @@ Erste Version im Mac App Store.
 **Schlüsselwörter (max. 100 Zeichen gesamt):**
 Beleuchtung,Theater,Einleuchten,Lichtpult,Eos,Patch,Bühnenlicht,Licht,Kreise,Aufbau
 
-**Hinweise für die App-Prüfung (Pflicht, nicht öffentlich):**
-Die App lädt die Web-App eines Teams (Eingabe beim ersten Start). Zum Testen: Team-Name `[TESTTEAM]`, Benutzer `[TESTNUTZER]`, Passwort `[TESTPASSWORT]`. Konto mit Beispieldaten (Show „Hamletmaschine") anlegen und eintragen. Die App benötigt Internet. Die Funktion „Vom Pult holen" (Import) verbindet per OSC/TCP (Port 3037) mit einem Eos-Pult im lokalen Netz und ist ohne Pult nicht testbar; sie ist optional.
+**Hinweise für die App-Prüfung (Pflicht, nicht öffentlich; Englisch eintragen):**
+```
+LuxStage is a professional lighting production tool for theater and live events. Production teams document rigs, set up and focus fixtures together, and import patch data from an ETC Eos lighting console. It is not a consumer app and is aimed at lighting professionals.
+
+This is the Mac version of our iOS/iPadOS app (Universal Purchase, same bundle ID). It is a desktop app around our web app (Electron) with one addition: importing patch data from a console over the local network. The iOS-only "Remote" tab (live console control) is not part of the Mac app.
+
+Why an account is required
+
+Show data (documentation, drawings, photos, check-offs) is synchronized in real time between team members. This runs on the LuxStage cloud service, operated by the developer at https://luxstage.app. Each team has its own address: https://<teamname>.luxstage.app. On first launch, the start screen asks for the team name only (e.g. "app-store-review"). The app builds the address itself. Accounts can be deleted by the user in the app's settings (web app).
+
+Demo access for review
+
+Team name: app-store-review
+
+1. Open the app.
+2. On the start screen, enter the team name above and click "Verbinden" (Connect).
+3. Sign in with the username and password below.
+
+Username: [USER]
+Password: [PASSWORD]
+
+Alternatively, "Demo ansehen" (View demo) on the start screen opens a demo show without an account (requires internet).
+
+The app is free. There is no paywall and no in-app purchase.
+
+Features overview
+
+Shows
+After login, the user sees a list of shows (productions). Click a show to open it.
+
+Inside a show
+- Aufbau (Setup): documentation of rig and positions, checklists, photos, drawing
+- Einleuchten (Focus): channel list with notes, gel colour, photos and position; fixtures are checked off when focused, all team members see the status live
+- Suche (Search): search across the whole show
+
+Console import (optional, Mac app only)
+
+The app can import channels, addresses, fixtures and groups from an ETC Eos console. The user enters the console's IP address; the app connects via OSC over TCP (port 3037) and reads the data. It only sends read requests and does not control the console or change anything on it. The user chooses whether to add only new items, merge, or mirror the console. This needs an Eos console (or the Eos offline editor) on the same network and cannot be tested without one. All other features work without it.
+
+Permissions and sandbox
+
+- App Sandbox is enabled.
+- Entitlement com.apple.security.network.client: HTTPS to the LuxStage cloud service, and OSC/TCP to a console on the local network.
+- Entitlement com.apple.security.files.user-selected.read-write: photos are attached through the system file dialog (only files the user selects).
+- The app does not access the camera, microphone, contacts or location.
+
+Network
+The app uses HTTPS to the LuxStage cloud service. Links to external sites open in the default browser. The only other connection is the user-initiated console import (TCP) on the local network.
+
+Without internet or account
+Already loaded shows are cached and shown read-only when offline.
+Without a team login, only the start screen and the demo are available.
+
+Technical notes
+
+- No analytics, no tracking, no third-party SDKs, no advertising
+- Updates are delivered through the Mac App Store (the built-in updater is disabled in this build)
+- Encryption export compliance: ITSAppUsesNonExemptEncryption = false
+- Universal binary (Apple silicon and Intel)
+- Supports macOS [VERSION]+
+```
 
 ## English
 

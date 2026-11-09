@@ -108,13 +108,17 @@ function fetchPatch({ host, port = DEFAULT_PORT, onProgress }) {
         if (kind === 'list') {
           // Strings: UID, Label, Hersteller, Modell. Ints: Index, Adresse, ...
           if (!answered.has(key) && part <= 1) {
-            const [, label = '', manufacturer = '', model = ''] = msg.strings
+            const [, label = '', manufacturer = '', model = '', gel = '', ...texts] = msg.strings
+            // Gel und Text1–10 (Strings 4–14); wie die CSV-Spalten benannt.
+            const fields = { gel }
+            for (let n = 1; n <= 10; n++) fields['text' + n] = texts[n - 1] ?? ''
             entries.set(String(channel), {
               channel: String(channel),
               address: msg.ints[1] ? String(msg.ints[1]) : '',
               label,
               manufacturer,
               model,
+              fields,
             })
           }
           answered.add(key)

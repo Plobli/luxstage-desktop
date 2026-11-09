@@ -52,7 +52,7 @@ test('fetchPatch liest Patch von Mock-Pult', async () => {
   server.close()
   assert.equal(result.complete, true)
   assert.deepEqual(result.patch.map(p => p.channel), ['5', '101'])
-  assert.deepEqual(result.patch[1], { channel: '101', address: '513', label: 'Front', manufacturer: 'ETC', model: 'Source_Four', notes: 'Gobo' })
+  assert.deepEqual(result.patch[1], { channel: '101', address: '513', label: 'Front', manufacturer: 'ETC', model: 'Source_Four', fields: { gel: '', text1: '', text2: '', text3: '', text4: '', text5: '', text6: '', text7: '', text8: '', text9: '', text10: '' }, notes: 'Gobo' })
 })
 
 test('fetchPatch meldet unerreichbares Pult', async () => {
