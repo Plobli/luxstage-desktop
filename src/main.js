@@ -131,13 +131,14 @@ function createWindow() {
   win.on('close', rememberBounds)
 
   // Native Optik: Pinch-Zoom aus, Wischen für Zurück/Vor, Seiten-CSS.
-  win.webContents.setVisualZoomLevelLimits(1, 1)
   win.on('swipe', (_e, direction) => {
     const nav = win.webContents.navigationHistory
     if (direction === 'left' && nav.canGoBack()) nav.goBack()
     if (direction === 'right' && nav.canGoForward()) nav.goForward()
   })
   win.webContents.on('dom-ready', () => {
+    // Pinch-Zoom aus. Erst hier: vorher gibt es keinen Render-Frame (Electron 45 lehnt sonst ab).
+    win.webContents.setVisualZoomLevelLimits(1, 1).catch(() => {})
     if (!win.webContents.getURL().startsWith('file://')) win.webContents.insertCSS(NATIVE_CSS)
   })
 
