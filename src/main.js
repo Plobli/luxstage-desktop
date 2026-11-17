@@ -1,5 +1,5 @@
 require('./sentry') // zuerst laden, damit Fehler beim Start erfasst werden
-const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme, screen, protocol, net } = require('electron')
+const { app, BrowserWindow, dialog, Menu, ipcMain, shell, nativeTheme, screen, protocol, net } = require('electron')
 const path = require('node:path')
 const { autoUpdater } = require('electron-updater')
 const { load, save, normalizeServerUrl } = require('./config')
@@ -272,7 +272,20 @@ function buildMenu() {
           label: 'Fehlerberichte senden (gilt ab Neustart)',
           type: 'checkbox',
           checked: load().errorReports === true,
-          click: (item) => save({ errorReports: item.checked }),
+          click: async (item) => {
+            if (item.checked) {
+              const { response } = await dialog.showMessageBox(win ?? undefined, {
+                type: 'question',
+                buttons: ['Senden erlauben', 'Abbrechen'],
+                defaultId: 1,
+                cancelId: 1,
+                message: 'Fehlerberichte senden?',
+                detail: 'Bei Abstürzen und Fehlern sendet LuxStage technische Informationen (Fehlermeldung, App-, System- und Gerätetyp) an den Fehlerdienst Sentry in der EU. Keine Namen, Konten, Shows oder Fotos. Du kannst das jederzeit im Menü Hilfe ändern.',
+              })
+              if (response !== 0) { item.checked = false; return }
+            }
+            save({ errorReports: item.checked })
+          },
         },
         { label: 'Offline-Speicher leeren', click: () => { cacheStore?.clearAll(); if (win) showApp() } },
       ],
