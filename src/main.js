@@ -1,3 +1,4 @@
+require('./sentry') // zuerst laden, damit Fehler beim Start erfasst werden
 const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme, screen, protocol, net } = require('electron')
 const path = require('node:path')
 const { autoUpdater } = require('electron-updater')

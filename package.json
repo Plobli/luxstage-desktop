@@ -69,7 +69,10 @@
       "entitlements": "build/entitlements.mas.plist",
       "entitlementsInherit": "build/entitlements.mas.inherit.plist",
       "provisioningProfile": "build/embedded.provisionprofile",
-      "type": "distribution"
+      "type": "distribution",
+      "extendInfo": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     }
   },
   "devDependencies": {
@@ -78,6 +81,7 @@
   },
   "author": "Christopher Rohde",
   "dependencies": {
+    "@sentry/electron": "^8.4.0",
     "electron-updater": "^6.8.11"
   }
 }
