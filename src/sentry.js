@@ -1,10 +1,12 @@
 // Fehlerüberwachung (Sentry) für den Hauptprozess. Nur in der gepackten App.
 // Die DSN darf im Client stehen (sie erlaubt nur das Senden). Datenschutz: keine Nutzer, IP, Pfade, Hostname.
 const { app } = require('electron')
+const { load } = require('./config')
 
 const DSN = 'https://b2dd83442720ec0aa80e8a1fcb141764@o4512445879615488.ingest.de.sentry.io/4512446224007248'
 
-if (app.isPackaged) {
+// Nur nach Einwilligung (Menü Hilfe > Fehlerberichte senden, Standard aus); Änderung gilt ab Neustart.
+if (app.isPackaged && load().errorReports === true) {
   const Sentry = require('@sentry/electron/main')
   Sentry.init({
     dsn: DSN,

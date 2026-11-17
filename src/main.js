@@ -268,6 +268,12 @@ function buildMenu() {
         action('Tour noch einmal ansehen', 'tour'),
         { label: 'Dokumentation', click: () => shell.openExternal('https://docs.luxstage.app') },
         { type: 'separator' },
+        {
+          label: 'Fehlerberichte senden (gilt ab Neustart)',
+          type: 'checkbox',
+          checked: load().errorReports === true,
+          click: (item) => save({ errorReports: item.checked }),
+        },
         { label: 'Offline-Speicher leeren', click: () => { cacheStore?.clearAll(); if (win) showApp() } },
       ],
     },
