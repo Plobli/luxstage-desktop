@@ -313,7 +313,16 @@ ipcMain.handle('app:open-register', () => {
   if (win) win.loadURL(`${ROOT_URL}/register`)
 })
 
-ipcMain.handle('app:set-server', (_event, value) => {
+// Server-Adresse: nur von der eigenen Startseite (start.html) annehmen.
+const START_PAGE = require('node:url').pathToFileURL(path.join(__dirname, 'start.html')).pathname
+function fromStartPage(event) {
+  try {
+    const u = new URL(event.senderFrame?.url)
+    return u.protocol === 'file:' && u.pathname === START_PAGE
+  } catch { return false }
+}
+ipcMain.handle('app:set-server', (event, value) => {
+  if (!fromStartPage(event)) return { ok: false }
   const url = normalizeServerUrl(value)
   if (!url) return { ok: false }
   save({ serverUrl: url })
