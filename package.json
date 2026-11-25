@@ -15,7 +15,9 @@
     "appId": "de.christopherrohde.LuxStageApp",
     "productName": "LuxStage",
     "files": [
-      "src/**/*"
+      "src/**/*",
+      "!node_modules/oxc-parser/**",
+      "!node_modules/@oxc-parser/**"
     ],
     "mac": {
       "category": "public.app-category.productivity",
