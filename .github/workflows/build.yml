@@ -76,7 +76,6 @@ jobs:
           path: |
             dist/*.dmg
             dist/*.zip
-            dist/*.exe
             dist/*.appx
             dist/*.blockmap
             dist/latest*.yml

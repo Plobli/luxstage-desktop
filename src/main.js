@@ -394,8 +394,10 @@ app.whenReady().then(() => {
   })
   buildMenu()
   createWindow()
-  // Store-Versionen (MSIX, Mac App Store) aktualisiert der Store selbst.
-  if (app.isPackaged && !process.windowsStore && !process.mas) {
+  // Store-Versionen (MSIX, Mac App Store) aktualisiert der Store selbst. Windows gibt es nur
+  // noch über den Microsoft Store (kein unsignierter Direkt-Installer mehr), daher dort kein
+  // Selbst-Update: es würde Pakete ohne Signaturprüfung installieren.
+  if (app.isPackaged && process.platform === 'darwin' && !process.mas) {
     autoUpdater.on('error', (err) => console.error('Update-Prüfung fehlgeschlagen:', err.message))
     autoUpdater.checkForUpdatesAndNotify().catch(() => {})
   }
